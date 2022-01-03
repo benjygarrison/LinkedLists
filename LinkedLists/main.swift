@@ -173,6 +173,7 @@ linkedList.addFront(3)
 linkedList.addFront(2)
 linkedList.addFront(1)
 linkedList.addFront(4)
+linkedList.addBack(5)
 
 linkedList.printLinkedList()
 

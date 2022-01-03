@@ -286,13 +286,55 @@ func findMergeThirdSolution(headA: Node?, headB: Node?) -> Int? { // O(n)
     return nil
 }
 
+/*MARK: question 3 detect a cycle
+ 
+ https://www.hackerrank.com/challenges/ctci-linked-list-cycle/problem
+ https://en.wikipedia.org/wiki/Cycle_detection#Floyd's_Tortoise_and_Hare
+ 
+ A linked list is said to contain a cycle if any node is visited more than once while traversing the list. For example, in the following graph, there is a cycle formed when node 5 points back to node 3.
+        4
+      /   \
+ 1 2 3     5
+     \_____/
+        ^
+        |
+(This is bad, as it leaks memory when 5 and 3 keep pointing at each other indefinitely.)
+*/
 
+class CycleNode {
+    var data: Int
+    weak var next: CycleNode?
+    
+    init(_ data: Int, _ next: CycleNode? = nil) {
+        self.data = data
+        self.next = next
+    }
+}
+
+
+func hasCycle(first: CycleNode) -> Bool {
+    var slow: CycleNode? = first //tortoise
+    var fast: CycleNode? = first //hare
+    
+    while fast != nil && fast!.next != nil {
+        slow = slow?.next
+        fast = fast?.next?.next
+        
+        if slow?.data == fast?.data {
+            return true
+        }
+    }
+    
+    
+    return false
+}
 
 
 //MARK: Arguments and results:
 
 //Args:
 
+//For 1 and 2
 let node6 = Node(6)
 let node5 = Node(5, node6)
 let node4 = Node(4, node5)
@@ -303,6 +345,19 @@ let node1 = Node(1, node2)
 let node11 = Node(11, node4)
 let node10 = Node(10, node11)
 
+//For 3
+let cycleNode5 = CycleNode(5)
+let cycleNode4 = CycleNode(4)
+let cycleNode3 = CycleNode(3)
+let cycleNode2 = CycleNode(2)
+let cycleHead = CycleNode(1)
+
+cycleHead.next = cycleNode2
+cycleNode2.next = cycleNode3
+cycleNode3.next = cycleNode4
+cycleNode4.next = cycleNode5
+cycleNode5.next = cycleNode3
+
 //Results:
 
 print("")
@@ -312,5 +367,5 @@ print("Question 2 answer (brute force) is: \(findMergeFirstSolution(headA: node1
 print("Question 2 answer (dictionary) is: \(findMergeFirstSolution(headA: node1, headB: node11) ?? 0)")
 print("Question 2 answer (comparing lengths) is: \(findMergeFirstSolution(headA: node1, headB: node11) ?? 0)")
 print("")
-//print("Question 4 answer is: \()")
+print("Question 4 answer is: \(hasCycle(first: cycleHead))")
 print("")

@@ -148,9 +148,10 @@ class LinkedList {
         head = nil
     }
 
+
 //MARK: Function to print linked list as array:
 
-    func printLinkedList() {
+func printLinkedList() {
         if head == nil {
             return
         }
@@ -167,6 +168,8 @@ class LinkedList {
     }
 }
 
+//test functions
+
 let linkedList = LinkedList()
 
 linkedList.addFront(3)
@@ -178,6 +181,32 @@ linkedList.addBack(5)
 linkedList.printLinkedList()
 
 
+//MARK: Algos start here!
 
+//Question 1: write a funtion to return length of any linked list
 
+//My solution
 
+func listLength(_ head: Node?) -> Int { // O(n)
+    if head == nil {
+      return 0
+    }
+    
+    var length = 0
+    var current = head
+    while current != nil {
+        length += 1
+        current = current?.next
+    }
+    
+    return length
+}
+
+let node6 = Node(6)
+let node5 = Node(5, node6)
+let node4 = Node(4, node5)
+let node3 = Node(3, node4)
+let node2 = Node(2, node3)
+let node1 = Node(1, node2)
+
+print("Question 1 answer for current value is: \(listLength(node3))")

@@ -6,34 +6,22 @@
 //
 
 import Foundation
-
-//MARK: Linked List algos:
-
 /*
  linked lists are super fast at loading to the front and take up little space (shrink and grow dynamically), compared to arrays
- 
  used in stacks and queues
- 
  O(1) vs array O(n)!
- 
  disadvantage: no random access, get/set = O(n)
- 
  like a train [(Head)|"A"]--[(Node(s))|"Linked"]--[(Tail)|"List"]--> nil
- */
-
-//MARK: know for interview!!
-
-/*
- Anything on the front = O(1)
-    - addFront/getFirst/deleteFirst
  
- If you have to walk = O(n)
-    - addBack/getBack/deleteLast
- 
+ MARK: know for interview!!
+ Anything on the front = O(1) -> addFront/getFirst/deleteFirst
+ If you have to walk = O(n) -> addBack/getBack/deleteLast
  Always the right size
- 
  No random access
  */
+
+
+
 
 //MARK: Create Linked List:
 
@@ -181,11 +169,14 @@ linkedList.addBack(5)
 linkedList.printLinkedList()
 
 
-//MARK: Algos start here!
 
-//Question 1: write a funtion to return length of any linked list
 
-//My solution
+//MARK: ----- Algos start here! -----
+
+
+
+
+//MARK: Question 1: write a funtion to return length of any linked list
 
 func listLength(_ head: Node?) -> Int { // O(n)
     if head == nil {
@@ -193,14 +184,114 @@ func listLength(_ head: Node?) -> Int { // O(n)
     }
     
     var length = 0
-    var current = head
-    while current != nil {
+    var currentNode = head
+    while currentNode != nil {
         length += 1
-        current = current?.next
+        currentNode = currentNode?.next
     }
-    
     return length
 }
+//Note: this is wasteful (O(n)) in a real world setting. Just add a size function to the original function that tracks list length at all times as it grows/shrinks, and call that size function
+
+
+
+
+/* MARK: Question 2: Merge 2 linked lists.
+ 
+ Given pointers to the head nodes of 2 linked lists that merge together at some point, find the node where the two lists merge. The merge point is where both lists point to the same node, i.e. they reference the same memory location. It is guaranteed that the 2 nodes will be different, and neither will ne NULL. If the lists share a common node, return that node's value.
+ After the merge point, both lists will share the same node pointers.
+ Visualize by imagining 2 train lines, and the first section at which they overlap, i.e. MacArthur Station for Richmond/Pittsburg lines
+ 
+ */
+
+//Brute force O(n^2):
+func findMergeFirstSolution(headA: Node?, headB: Node?) -> Int? { // O(m*n) -> O(n^2)
+    let lengthOfA = listLength(headA) // O(m)
+    let lengthOfB = listLength(headB) // O(n)
+    
+    var currentLengthOfA = headA
+    
+    for _ in 0...lengthOfA-1 { //O(m)
+        var currentLengthOfB = headB
+        for _ in 0...lengthOfB-1 { //O(n)
+        let A = currentLengthOfA?.data
+        let B = currentLengthOfB?.data
+        //print("A: \(A ?? 0) B: \(B ?? 0)")
+            if A == B {
+                return A
+            }
+        currentLengthOfB = currentLengthOfB?.next
+        }
+        currentLengthOfA = currentLengthOfA?.next
+    }
+    return nil
+}
+
+//Trade time for space using a Dictionary:
+func findMergeSecondSolution(headA: Node?, headB: Node?) -> Int? { //reduces to O(n)
+    let lengthA = listLength(headA) // O(m)
+    let lengthB = listLength(headB) // O(n)
+    
+    var dictionary = [Int?: Bool]()
+    var currentB = headB
+    
+    for _ in 0...lengthB - 1 { // O(n)
+        let B = currentB?.data
+        dictionary[B] = true
+        currentB = currentB?.next
+    }
+    
+    var currentA = headA
+    
+    for _ in 0...lengthA - 1 { // O(m)
+        let A = currentA?.data
+        if dictionary[A] == true {
+            return A
+        }
+        currentA = currentA?.next
+    }
+    return nil
+}
+
+//Compare lengths of lists and use the difference to find answer
+func findMergeThirdSolution(headA: Node?, headB: Node?) -> Int? { // O(n)
+    let lengthA = listLength(headA)
+    let lengthB = listLength(headB)
+    
+    var currentA = headA
+    var currentB = headB
+    
+    if lengthB > lengthA { //swap variables if lengthB is longer
+        let temp = currentA
+        currentA = currentB
+        currentB = temp
+    }
+    
+    let difference = abs(lengthA - lengthB) //could return negative, so make it absolute -> "abs()"
+    
+    for _ in 1...difference {
+        currentA = currentA?.next
+    }
+    
+    for _ in 0...lengthB-1 {
+        let A = currentA?.data
+        let B = currentB?.data
+        if  A == B {
+            return A
+        }
+        currentA = currentA?.next
+        currentB = currentB?.next
+    }
+    
+    return nil
+}
+
+
+
+
+//MARK: Arguments and results:
+
+//Args:
 
 let node6 = Node(6)
 let node5 = Node(5, node6)
@@ -209,4 +300,17 @@ let node3 = Node(3, node4)
 let node2 = Node(2, node3)
 let node1 = Node(1, node2)
 
-print("Question 1 answer for current value is: \(listLength(node3))")
+let node11 = Node(11, node4)
+let node10 = Node(10, node11)
+
+//Results:
+
+print("")
+print("Question 1 answer is: \(listLength(node3))")
+print("")
+print("Question 2 answer (brute force) is: \(findMergeFirstSolution(headA: node1, headB: node11) ?? 0)")
+print("Question 2 answer (dictionary) is: \(findMergeFirstSolution(headA: node1, headB: node11) ?? 0)")
+print("Question 2 answer (comparing lengths) is: \(findMergeFirstSolution(headA: node1, headB: node11) ?? 0)")
+print("")
+//print("Question 4 answer is: \()")
+print("")
